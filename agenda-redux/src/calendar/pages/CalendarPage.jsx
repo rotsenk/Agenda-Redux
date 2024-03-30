@@ -2,9 +2,8 @@ import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { addHours } from 'date-fns';
-import { Navbar } from "../";
+import { CalendarEvent, Navbar } from "../";// importar CalendarEvent
 import { localizer, getMessagesES } from '../../helpers';
-
 
 const events = [{
   title: 'Cumpleaños del team leader',
@@ -21,13 +20,8 @@ const events = [{
 
 export const CalendarPage = () => {
 
-  //este evento se va a disparar, cuando suceda algo en el calendario
-  //si hago clic, lo selecciono, navego dentro del calendario
-  //porque en todo momento se vuelve a reprocesar estas propiedades
   const eventStyleGetter = ( event, start, end, isSelected ) => {
-    console.log({ event, start, end, isSelected });
 
-    //hagamos algunas modificaciones, con un estilo genérico
     const style = {
       backgroundColor: '#347cf7',
       borderRadius: '0px',
@@ -54,6 +48,9 @@ export const CalendarPage = () => {
         style={{ height: 'calc( 100vh - 80px)' }}
         messages={ getMessagesES() }
         eventPropGetter={ eventStyleGetter }
+        components={{
+          event: CalendarEvent // mandamos esta referencia
+        }}// especificar un objeto en el cual tendríamos los posibles componentes necesarios para sobreescribir, ej agenda, día, meses
       />
 
     </>
