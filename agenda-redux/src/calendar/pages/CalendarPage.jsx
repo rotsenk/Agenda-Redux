@@ -1,27 +1,11 @@
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import enUS from 'date-fns/locale/en-US';
-import { addHours, format, parse, startOfWeek, getDay } from 'date-fns';
-
+import { addHours } from 'date-fns';
 import { Navbar } from "../";
+import { localizer, getMessagesES } from '../../helpers';
 
-const locales = {
-  'en-US': enUS,
-}
 
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-})
-
-//creamos una lista de eventos, así rapidamente
-//con addHours, podemos elegir una fecha y sumarle horas, en este caso 2
-//aquí podemos poner eventos personalizados, los unicos obligatorios son
-//title, start, y end
 const events = [{
   title: 'Cumpleaños del team leader',
   notes: 'Comprar una taza de spiderman pequeño',
@@ -33,19 +17,43 @@ const events = [{
     name: 'Nestor'
   }
 }]
-//reemplazamos por myEventList
+
 
 export const CalendarPage = () => {
+
+  //este evento se va a disparar, cuando suceda algo en el calendario
+  //si hago clic, lo selecciono, navego dentro del calendario
+  //porque en todo momento se vuelve a reprocesar estas propiedades
+  const eventStyleGetter = ( event, start, end, isSelected ) => {
+    console.log({ event, start, end, isSelected });
+
+    //hagamos algunas modificaciones, con un estilo genérico
+    const style = {
+      backgroundColor: '#347cf7',
+      borderRadius: '0px',
+      opacity: 0.8,
+      color: 'white'
+    }
+    
+    return{
+      style
+    }
+
+  }
+
   return (
     <>
       <Navbar />
 
       <Calendar
+        culture='es'
         localizer={ localizer }
         events={ events }
         startAccessor="start"
         endAccessor="end"
         style={{ height: 'calc( 100vh - 80px)' }}
+        messages={ getMessagesES() }
+        eventPropGetter={ eventStyleGetter }
       />
 
     </>
