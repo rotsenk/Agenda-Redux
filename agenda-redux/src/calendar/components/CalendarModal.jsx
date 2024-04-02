@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { addHours } from 'date-fns';
 import Modal from 'react-modal';
+import DatePicker from 'react-datepicker'; // importamos el datepicker
+import 'react-datepicker/dist/react-datepicker.css'; // importar los estilos
 
 const customStyles = {
     content: {
@@ -18,6 +21,29 @@ export const CalendarModal = () => {
 
     const [ isOpen, setIsOpen ] = useState(true);
 
+    // crear un useState
+    const [ formValues, setFormValues ] = useState({
+        title: 'Nestor',
+        notes: 'Rivas',
+        start: new Date(),
+        end: addHours ( new Date(), 2 ),
+    });
+
+    const onInputChanged = ({ target }) => {
+        setFormValues({
+            ...formValues,
+            [ target.name ]: target.value
+        })
+    }
+
+    // creamos algo que nos modifique la fecha, el start o el end
+    const onDateChanged = ( event, changing) => {
+        setFormValues({
+            ...formValues,
+            [ changing ]: event
+        })
+    }// este me sirve para cambiar tanto la caja de texto del end como del starr
+
     const onCloseModal = () => {
         console.log('Cerrando Modal');
 
@@ -29,13 +55,74 @@ export const CalendarModal = () => {
             isOpen={ isOpen }
             onRequestClose={ onCloseModal }
             style={customStyles}
-            className='modal' // así se llama la clase en el css
-            overlayClassName='modal-fondo' // clase de css
-            closeTimeoutMS={ 200 } // tiempo en milisegundos
+            className='modal' 
+            overlayClassName='modal-fondo' 
+            closeTimeoutMS={ 200 } 
         >
-            <h1>Hola Mundooo</h1>
+            <h1> Nuevo evento </h1>
             <hr />
-            <p>Párrafo desde el modal...</p>
+            <form className="container">
+
+                <div className="form-group mb-2">
+                    <label>Fecha y hora inicio</label>
+                    <DatePicker
+                        selected={ formValues.start } // fecha seleccionada
+                        className='form-control' // clase de boostrap
+                        onChange={ (event) => onDateChanged(event, 'start') }// para hacer el cambio, este emite el onChange
+                        dateFormat='Pp'// para que aparezca la hora
+                    />
+                </div>
+
+                <div className="form-group mb-2">
+                    <label>Fecha y hora fin</label>
+                    <DatePicker
+                        minDate={ formValues.start }// para que no seleccione una fecha inferior a la fecha de inicio
+                        selected={ formValues.end } // fecha seleccionada
+                        className='form-control' // clase de boostrap
+                        onChange={ (event) => onDateChanged(event, 'end') }// para hacer el cambio, este emite el onChange
+                        dateFormat='Pp'// para que aparezca la hora
+                    />
+                </div>
+
+                <hr />
+                <div className="form-group mb-2">
+                    <label>Titulo y notas</label>
+                    <input 
+                        type="text" 
+                        className="form-control"
+                        placeholder="Título del evento"
+                        name="title"
+                        autoComplete="off"
+
+                        value={ formValues.title }
+                        onChange={ onInputChanged }
+                    />
+                    <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
+                </div>
+
+                <div className="form-group mb-2">
+                    <textarea 
+                        type="text" 
+                        className="form-control"
+                        placeholder="Notas"
+                        rows="5"
+                        name="notes"
+
+                        value={ formValues.notes }
+                        onChange={ onInputChanged }
+                    ></textarea>
+                    <small id="emailHelp" className="form-text text-muted">Información adicional</small>
+                </div>
+
+                <button
+                    type="submit"
+                    className="btn btn-outline-primary btn-block"
+                >
+                    <i className="far fa-save"></i>
+                    <span> Guardar</span>
+                </button>
+
+            </form>
 
         </Modal>
     )
