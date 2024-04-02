@@ -1,3 +1,14 @@
+# Datepicker en español
+En esta sección haremos dos cosas:
+
+1. Ponerlo el datepicker en español.
+2. Que me permita a mí cambiar la hora, hacerlo mediante el editor y que todo esté en español.
+
+Nos dirigimos hacia `CalendarModal.jsx` y en el Datepicker, necesitamos agregar una nueva propiedad `ShowTimeSelect` 
+
+para el idiona, revisamos la documentación: https://www.npmjs.com/package/react-datepicker, en la parte de Localization, y vamos a hacer unas importaciones para que funcione.
+
+```jsx
 import { useState } from 'react';
 import { addHours } from 'date-fns';
 import Modal from 'react-modal';
@@ -141,3 +152,6 @@ export const CalendarModal = () => {
         </Modal>
     )
 }
+```
+
+Por ahora eso es todo por hacer en esta sección. La próxima, al tocar botón de guardar nosotros ocupamos tomar todos los valores y prepararlos para crear una nueva nota cerrar el modal y hay muchas cosas más que hacer por aquí, pero nuestra aplicación ya está tomando forma. 
