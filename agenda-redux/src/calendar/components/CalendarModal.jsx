@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { addHours } from 'date-fns';
+import { useMemo, useState } from 'react';
+import { addHours, differenceInSeconds } from 'date-fns';
 import Modal from 'react-modal';
-import DatePicker, { registerLocale } from 'react-datepicker'; // importar registerLocale 
+import DatePicker, { registerLocale } from 'react-datepicker'; 
 import 'react-datepicker/dist/react-datepicker.css'; 
-import es from 'date-fns/locale/es';// importar el idioma español
+import es from 'date-fns/locale/es';
+import Swal from 'sweetalert2'; // Importar SweetAlert2
+
 
 // mandar el idioma en español
 registerLocale ( 'es', es );
-
-// luego, colocamos una propiedad más en el Datepicker
 
 const customStyles = {
     content: {
@@ -26,14 +26,34 @@ Modal.setAppElement('#root');
 export const CalendarModal = () => {
 
     const [ isOpen, setIsOpen ] = useState(true);
+    // crear un nuevo estado
+    const [ formSubmitted, setFormSubmitted ] = useState(false);// iniciamos en falso
+    // este nuevo estado, yo voy a modificar cuando la persona intente hacer submit
+    // modifiquemos en onSubmit
 
-    // crear un useState
     const [ formValues, setFormValues ] = useState({
         title: 'Nestor',
         notes: 'Rivas',
         start: new Date(),
         end: addHours ( new Date(), 2 ),
     });
+
+    // usamos el useMemo y lo importamos
+    // tendremos dos dependencias en el arreglo, para que se memorice el valor
+    // en este caso, se memoriza si el título cambia o formSubmitted cambia
+    // creamos la clase titleClass que es la que le voy a colocar al input
+    const titleClass = useMemo (() => {
+        // si el formulario no se ha disparado, entonces voy a regresar un string vacío a la clase
+        if( !formSubmitted ) return '';
+
+        // ahora, si ya se hizo el posteo del formulario y si no ha ingresado titulo, muestro error
+        return ( formValues.title.length > 0 )
+        ? 'is-valid'
+        : 'is-invalid'
+
+
+    }, [ formValues.title, formSubmitted ])
+    // este titleClass lo vamos a colocar en el input de título y notas en el formulario
 
     const onInputChanged = ({ target }) => {
         setFormValues({
@@ -42,18 +62,37 @@ export const CalendarModal = () => {
         })
     }
 
-    // creamos algo que nos modifique la fecha, el start o el end
     const onDateChanged = ( event, changing) => {
         setFormValues({
             ...formValues,
             [ changing ]: event
         })
-    }// este me sirve para cambiar tanto la caja de texto del end como del starr
+    }
 
     const onCloseModal = () => {
         console.log('Cerrando Modal');
 
         setIsOpen( false );
+    }
+
+    const onSubmit = (event) => {
+
+        event.preventDefault();
+        setFormSubmitted(true);
+
+        const difference = differenceInSeconds( formValues.end, formValues.start );
+        console.log({ difference });
+
+        if ( isNaN(difference) || difference <= 0 ) {
+            Swal.fire('Fechas incorrectas', 'Revisas fechas ingresadas', 'error');
+            return;
+        }
+
+        if ( formValues.title.length <= 0 ) {
+            return;
+        }
+
+        console.log(formValues);
     }
 
     return(
@@ -67,7 +106,7 @@ export const CalendarModal = () => {
         >
             <h1> Nuevo evento </h1>
             <hr />
-            <form className="container">
+            <form className="container" onSubmit={ onSubmit }>
 
                 <div className="form-group mb-2">
                     <label>Fecha y hora inicio</label>
@@ -77,9 +116,9 @@ export const CalendarModal = () => {
                         onChange={ (event) => onDateChanged(event, 'start') }
                         dateFormat='Pp'
 
-                        showTimeSelect // propiedad para seleccionar el tiempo
-                        locale='es' // definir el idioma
-                        timeCaption='Hora' // enviar manualmente el caption para time
+                        showTimeSelect 
+                        locale='es' 
+                        timeCaption='Hora' 
                     />
                 </div>
 
@@ -92,9 +131,9 @@ export const CalendarModal = () => {
                         onChange={ (event) => onDateChanged(event, 'end') }
                         dateFormat='Pp'
 
-                        showTimeSelect // propiedad para seleccionar el tiempo
-                        locale='es' // definir el idioma
-                        timeCaption='Hora' // enviar manualmente el caption para time
+                        showTimeSelect 
+                        locale='es' 
+                        timeCaption='Hora' 
                     />
                 </div>
 
@@ -103,7 +142,7 @@ export const CalendarModal = () => {
                     <label>Titulo y notas</label>
                     <input 
                         type="text" 
-                        className="form-control"
+                        className={`form-control ${ titleClass } `} // modificamos
                         placeholder="Título del evento"
                         name="title"
                         autoComplete="off"
