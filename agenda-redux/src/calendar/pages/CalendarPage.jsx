@@ -5,26 +5,16 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { addHours } from 'date-fns';
 import { CalendarEvent, CalendarModal, Navbar } from "../";
 import { localizer, getMessagesES } from '../../helpers';
-import { useUiStore } from '../../hooks';// importar useUiStore
+import { useUiStore, useCalendarStore } from '../../hooks';// importar useCalendarStore
 
-
-const events = [{
-  title: 'Cumpleaños del team leader',
-  notes: 'Comprar una taza de spiderman pequeño',
-  start: new Date(),
-  end: addHours( new Date(), 2 ),
-  bgColor: '#fafafa',
-  user: {
-    _id: '123',
-    name: 'Nestor'
-  }
-}]
 
 
 export const CalendarPage = () => {
 
-  // aquí usaremos el custom hook useUiStore
-  const { openDateModal } = useUiStore();// este método lo llamaré cuando se hace doble clic
+  const { openDateModal } = useUiStore();
+
+  // destructuramos lo que viene de useCalendarStore
+  const { events } = useCalendarStore();// con esto ya tenemos acceso a los eventos
 
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'agenda');
 
@@ -44,8 +34,6 @@ export const CalendarPage = () => {
   }
 
   const onDoubleClick = ( event ) => {
-    // console.log({ doubleClick: event });
-    // aquí mandamos a llamar openDateModal
     openDateModal();
   }
 
