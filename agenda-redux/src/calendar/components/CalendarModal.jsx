@@ -4,7 +4,8 @@ import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker'; 
 import 'react-datepicker/dist/react-datepicker.css'; 
 import es from 'date-fns/locale/es';
-import Swal from 'sweetalert2'; // Importar SweetAlert2
+import Swal from 'sweetalert2';
+import { useUiStore } from '../../hooks';
 
 
 // mandar el idioma en español
@@ -25,11 +26,10 @@ Modal.setAppElement('#root');
 
 export const CalendarModal = () => {
 
-    const [ isOpen, setIsOpen ] = useState(true);
-    // crear un nuevo estado
-    const [ formSubmitted, setFormSubmitted ] = useState(false);// iniciamos en falso
-    // este nuevo estado, yo voy a modificar cuando la persona intente hacer submit
-    // modifiquemos en onSubmit
+    // extraer la función que nos interesa, en este caso closeDateModal
+    const { isDateModalOpen, closeDateModal } = useUiStore();
+
+    const [ formSubmitted, setFormSubmitted ] = useState(false);
 
     const [ formValues, setFormValues ] = useState({
         title: 'Nestor',
@@ -38,22 +38,16 @@ export const CalendarModal = () => {
         end: addHours ( new Date(), 2 ),
     });
 
-    // usamos el useMemo y lo importamos
-    // tendremos dos dependencias en el arreglo, para que se memorice el valor
-    // en este caso, se memoriza si el título cambia o formSubmitted cambia
-    // creamos la clase titleClass que es la que le voy a colocar al input
     const titleClass = useMemo (() => {
-        // si el formulario no se ha disparado, entonces voy a regresar un string vacío a la clase
+
         if( !formSubmitted ) return '';
 
-        // ahora, si ya se hizo el posteo del formulario y si no ha ingresado titulo, muestro error
         return ( formValues.title.length > 0 )
         ? 'is-valid'
         : 'is-invalid'
 
 
     }, [ formValues.title, formSubmitted ])
-    // este titleClass lo vamos a colocar en el input de título y notas en el formulario
 
     const onInputChanged = ({ target }) => {
         setFormValues({
@@ -70,9 +64,9 @@ export const CalendarModal = () => {
     }
 
     const onCloseModal = () => {
-        console.log('Cerrando Modal');
+        // colocamos aquí la función para cerrar modal
+        closeDateModal();
 
-        setIsOpen( false );
     }
 
     const onSubmit = (event) => {
@@ -97,7 +91,7 @@ export const CalendarModal = () => {
 
     return(
         <Modal
-            isOpen={ isOpen }
+            isOpen={ isDateModalOpen }// viene del custom hook
             onRequestClose={ onCloseModal }
             style={customStyles}
             className='modal' 

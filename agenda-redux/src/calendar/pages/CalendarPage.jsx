@@ -3,8 +3,9 @@ import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { addHours } from 'date-fns';
-import { CalendarEvent, CalendarModal, Navbar } from "../";// importamos CalendarModal
+import { CalendarEvent, CalendarModal, Navbar } from "../";
 import { localizer, getMessagesES } from '../../helpers';
+import { useUiStore } from '../../hooks';// importar useUiStore
 
 
 const events = [{
@@ -21,6 +22,9 @@ const events = [{
 
 
 export const CalendarPage = () => {
+
+  // aquí usaremos el custom hook useUiStore
+  const { openDateModal } = useUiStore();// este método lo llamaré cuando se hace doble clic
 
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'agenda');
 
@@ -40,7 +44,9 @@ export const CalendarPage = () => {
   }
 
   const onDoubleClick = ( event ) => {
-    console.log({ doubleClick: event });
+    // console.log({ doubleClick: event });
+    // aquí mandamos a llamar openDateModal
+    openDateModal();
   }
 
   const onSelect = ( event ) => {
@@ -49,7 +55,7 @@ export const CalendarPage = () => {
 
   const onViewChange = ( event ) => {
 
-    localStorage.setItem('lastView', event );// event es mes, día, semana, etc...
+    localStorage.setItem('lastView', event );
     
   }
 
@@ -75,7 +81,6 @@ export const CalendarPage = () => {
         defaultView={ lastView }
       />
 
-       {/* colocamos CalendarModal antes de que se cierre */}
        <CalendarModal />
 
     </>
