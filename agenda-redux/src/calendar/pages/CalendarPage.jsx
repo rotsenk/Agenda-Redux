@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Calendar } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { addHours } from 'date-fns';
 import { CalendarEvent, CalendarModal, Navbar } from "../";
 import { localizer, getMessagesES } from '../../helpers';
 import { useUiStore, useCalendarStore } from '../../hooks';// importar useCalendarStore
@@ -13,8 +12,9 @@ export const CalendarPage = () => {
 
   const { openDateModal } = useUiStore();
 
-  // destructuramos lo que viene de useCalendarStore
-  const { events } = useCalendarStore();// con esto ya tenemos acceso a los eventos
+  // ahora vamos a tomar el setter del evento activo
+  const { events, setActiveEvent } = useCalendarStore();
+  // y cuando hacemos clic en onSelect, este sería el evento que le tengo que mandar a la función
 
   const [ lastView, setLastView ] = useState(localStorage.getItem('lastView') || 'agenda');
 
@@ -38,12 +38,14 @@ export const CalendarPage = () => {
   }
 
   const onSelect = ( event ) => {
-    console.log({ click: event });
+    // console.log({ click: event });
+    setActiveEvent( event );
   }
 
   const onViewChange = ( event ) => {
 
     localStorage.setItem('lastView', event );
+    setLastView( event ); // colocar setLastView que no lo habíamos colocado
     
   }
 

@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { addHours, differenceInSeconds } from 'date-fns';
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker'; 
 import 'react-datepicker/dist/react-datepicker.css'; 
 import es from 'date-fns/locale/es';
 import Swal from 'sweetalert2';
-import { useUiStore } from '../../hooks';
+import { useCalendarStore, useUiStore } from '../../hooks';// importar useCalendarStore
 
 
 // mandar el idioma en español
@@ -26,14 +26,16 @@ Modal.setAppElement('#root');
 
 export const CalendarModal = () => {
 
-    // extraer la función que nos interesa, en este caso closeDateModal
     const { isDateModalOpen, closeDateModal } = useUiStore();
+
+    // extraer las dependencias que nos interesan desde useCalendarStore
+    const { activeEvent } = useCalendarStore();
 
     const [ formSubmitted, setFormSubmitted ] = useState(false);
 
     const [ formValues, setFormValues ] = useState({
-        title: 'Nestor',
-        notes: 'Rivas',
+        title: '',
+        notes: '',
         start: new Date(),
         end: addHours ( new Date(), 2 ),
     });
@@ -48,6 +50,17 @@ export const CalendarModal = () => {
 
 
     }, [ formValues.title, formSubmitted ])
+
+    // creamos el useEffect
+    // Necesitaremos las dependencias que van en el array desde useCalendarStore
+    // este efecto se va a estr disparando cada vez que activeEvent cambie
+    useEffect(() => {
+        // como hay un punto en el cuál activeEvent es nulo
+        if( activeEvent !== null ){
+            setFormValues({ ...activeEvent });
+        }
+
+    }, [ activeEvent ])
 
     const onInputChanged = ({ target }) => {
         setFormValues({

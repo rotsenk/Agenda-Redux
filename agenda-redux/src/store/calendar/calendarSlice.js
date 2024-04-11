@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addHours } from 'date-fns'; // importar addHours
+import { addHours } from 'date-fns';
 
-// colocar los eventos temporalmente acá
-// porque estos eventos deben llegar desde el backend
 const tempEvent = {
+    _id: new Date().getTime(),
     title: 'Cumpleaños del team leader',
     notes: 'Comprar una taza de spiderman pequeño',
     start: new Date(),
@@ -13,7 +12,7 @@ const tempEvent = {
         _id: '123',
         name: 'Nestor'
     }
-};// pasamos este como primer evento en events del initialState
+};
 
 export const calendarSlice = createSlice({
     name: 'calendar',
@@ -24,11 +23,13 @@ export const calendarSlice = createSlice({
         activeEvent: null 
     },
     reducers: {
-        increment: (state, /**action */) => {
-            state.counter += 1;
+        // de la action extraemos el payload, ya sea que podemos mandat toda la nota o sólo el id
+        //tratemos de manejar esto lo más homogéneo posible
+        onSetActiveEvent: (state, { payload }) => {
+            state.activeEvent = payload; // lo que sea que le mande, se va a activar
         },
     }
 
 })
 
-export const { increment } = calendarSlice.actions;
+export const { onSetActiveEvent } = calendarSlice.actions;

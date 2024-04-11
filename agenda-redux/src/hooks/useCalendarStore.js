@@ -1,9 +1,16 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux'; // importar useDispatch
+import { onSetActiveEvent } from '../store'; // importar onSetActiveEvent
 
 export const useCalendarStore = () => {
-    // 1. tomaremos los eventos que tenemos en calendarSlice
 
     const { events, activeEvent } = useSelector( state => state.calendar );
+
+    // creamos la constante
+    const dispatch = useDispatch();
+
+    const setActiveEvent = ( calendarEvent ) => {
+        dispatch( onSetActiveEvent( calendarEvent) );
+    }// este es mi primer método que voy a exponer
 
     return {
         //* propiedades
@@ -11,6 +18,7 @@ export const useCalendarStore = () => {
         activeEvent,
 
         //* métodos
+        setActiveEvent
     }
 }
 
