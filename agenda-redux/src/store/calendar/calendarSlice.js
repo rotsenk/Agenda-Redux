@@ -23,13 +23,19 @@ export const calendarSlice = createSlice({
         activeEvent: null 
     },
     reducers: {
-        // de la action extraemos el payload, ya sea que podemos mandat toda la nota o sólo el id
-        //tratemos de manejar esto lo más homogéneo posible
         onSetActiveEvent: (state, { payload }) => {
-            state.activeEvent = payload; // lo que sea que le mande, se va a activar
+            state.activeEvent = payload;
+        },
+        // el payload será la nueva nota con el id, y procesada, lista para guardarse
+        onAddNewEvent: (state, { payload }) => {
+            state.events.push(payload); // sin redux toolkit no pudiésemos utilizar el push
+            // una vez se inserta la nota, sé que tengo que cerrar el modal y limpiar la nota activa
+            state.activeEvent = null; // con esto limpio el evento activo
+
         },
     }
 
 })
 
-export const { onSetActiveEvent } = calendarSlice.actions;
+// exportar el nuevo reducer onAddNewEvent
+export const { onSetActiveEvent, onAddNewEvent } = calendarSlice.actions;
