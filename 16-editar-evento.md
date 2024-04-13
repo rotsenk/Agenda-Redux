@@ -1,3 +1,10 @@
+# Editar el evento activo
+
+En esta sección, quiero que hagamos la actualización de el evento, es decir si estoy en el evento y necesito modificar algo y guardar, quiero que eso literalmente quede afectado porque actualmente aunque pareciera que sí, no es persistente esa parte aún.
+
+Vámonos a nuestro `calendarSlice.js`, ocupamos un reducer nuevo...
+
+```jsx
 import { createSlice } from '@reduxjs/toolkit';
 import { addHours } from 'date-fns';
 
@@ -53,3 +60,51 @@ export const calendarSlice = createSlice({
 
 // exportar la acción onUpdateEvent
 export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent } = calendarSlice.actions;
+```
+
+Ahora, nos vamos a nuestro `useCalendarStore.jsx` para la parte de la actualización
+
+```jsx
+import { useDispatch, useSelector } from 'react-redux';
+import { onAddNewEvent, onSetActiveEvent, onUpdateEvent } from '../store'; // importar onUpdateEvent
+
+export const useCalendarStore = () => {
+
+    const { events, activeEvent } = useSelector( state => state.calendar );
+
+    const dispatch = useDispatch();
+
+    const setActiveEvent = ( calendarEvent ) => {
+        dispatch( onSetActiveEvent( calendarEvent) );
+    }
+
+    const startSavingEvent = async( calendarEvent ) => {
+
+        if ( calendarEvent._id ) {
+            // Actualizando
+            // mandamos el payload, que en este caso es calendarEvent
+            dispatch( onUpdateEvent({ ...calendarEvent }) )
+
+        } else {
+            // Creando
+            dispatch( onAddNewEvent({ ...calendarEvent, _id: new Date().getTime() }) )
+            
+        }
+    }
+
+    return {
+        //* propiedades
+        events,
+        activeEvent,
+
+        //* métodos
+        setActiveEvent,
+        startSavingEvent, // colocar acá el startSavingEvent
+    }
+}
+``` 
+
+Esto en el navegador, me podría dar una falsa sensación de que lo hizo bien, pero revisemos en el Tree del redux en el navegador, y veamos...
+Podemos observar que sí se están realizando los cambios.
+
+En la próxima sección haremos la eliminación de un evento...
