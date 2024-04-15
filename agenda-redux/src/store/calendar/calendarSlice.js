@@ -31,25 +31,28 @@ export const calendarSlice = createSlice({
             state.activeEvent = null;
         },
         onUpdateEvent: (state, { payload }) => {
-            // si estamos actualizando un evento, significaría que viene con un id
-            // tiene que buscar cuál es ese evento que quiere modificar o reemplazar
-            // con redux toolkit podemos agarrar los eventos y sobreescribirlos
-            // este map regresa un nuevo arreglo basado en el valor de retorno
-            // es decir lo que sea que regrese será nuestro valor de modificar
+           
             state.events = state.events.map( event => {
-                // la magia sucede acá, si el id del evento es exactamente igual a lo que me manda en el payload
-                // entonces voy a retornar el payload
-
+               
                 if ( event._id === payload._id ) {
-                    return payload; // en el payload viene toda la info de la nota activa
+                    return payload;
                 }
 
                 return event;
             })
+        },
+        onDeleteEvent: ( state ) => {
+            // debemos dejar de intentar llamar si no tenemos ninguna nota activa, no se debe hacer nada
+
+            // preguntamos si esto existe o no
+            if ( state.activeEvent ) {
+                state.events = state.events.filter( event => event._id !== state.activeEvent._id );
+                state.activeEvent = null;
+            }// si tenemos una nota activa entonces que lo elimine, caso contrario no haremos nada
+
         }
     }
 
 })
 
-// exportar la acción onUpdateEvent
-export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent } = calendarSlice.actions;
+export const { onSetActiveEvent, onAddNewEvent, onUpdateEvent, onDeleteEvent } = calendarSlice.actions;
