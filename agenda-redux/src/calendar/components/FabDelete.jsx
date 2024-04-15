@@ -1,12 +1,11 @@
 import { useCalendarStore, useUiStore } from '../../hooks';
 
-
 export const FabDelete = () => {
-  
-  // haremos que este botón sea autosuficiente
-  // tomaremos la propiedad que creamos hasEventSelected
-  // y con eso jugamos con el style para mostrar
+
   const { startDeletingEvent, hasEventSelected } = useCalendarStore();
+
+  // modificaciones para que el botón de eliminar no aparezca al abrir y cerrar modal
+  const { isDateModalOpen } = useUiStore();
 
   const handleDelete = () => {
     startDeletingEvent();
@@ -18,8 +17,8 @@ export const FabDelete = () => {
         className="btn btn-danger fab-danger"
         onClick={ handleDelete }
         style={{
-          display: hasEventSelected ? '' : 'none'
-        }} // con esto ocultamos el botón
+          display: hasEventSelected && !isDateModalOpen ? '' : 'none'
+        }}
     >
         <i className="fas fa-trash-alt"></i>
     </button>

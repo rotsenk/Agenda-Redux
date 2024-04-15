@@ -410,3 +410,35 @@ export const FabDelete = () => {
 ```
 
 Ahora nos vamos al navegador y vemos que funciona, sin embargo, hay cosas en las que debemos pensar y es que si tenemos el modal abierto, ese botón de *delete* no debería mostrarse, así mejorar la experiencia del usuario.
+
+## Modificaciones para que el botón no aparezca al abrir el modal
+Modificar en `FabDelete.jsx`
+
+```jsx
+import { useCalendarStore, useUiStore } from '../../hooks';
+
+export const FabDelete = () => {
+
+  const { startDeletingEvent, hasEventSelected } = useCalendarStore();
+
+  // modificaciones para que el botón de eliminar no aparezca al abrir y cerrar modal
+  const { isDateModalOpen } = useUiStore();
+
+  const handleDelete = () => {
+    startDeletingEvent();
+  }
+
+
+  return (
+    <button
+        className="btn btn-danger fab-danger"
+        onClick={ handleDelete }
+        style={{
+          display: hasEventSelected && !isDateModalOpen ? '' : 'none'
+        }}
+    >
+        <i className="fas fa-trash-alt"></i>
+    </button>
+  )
+}
+```
